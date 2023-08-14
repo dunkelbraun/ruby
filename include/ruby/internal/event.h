@@ -40,6 +40,7 @@
 #define RUBY_EVENT_C_RETURN  0x0040 /**< Return from a method, written in C. */
 #define RUBY_EVENT_RAISE     0x0080 /**< Encountered a `raise` statement. */
 #define RUBY_EVENT_ALL       0x00ff /**< Bitmask of traditional events. */
+#define RUBY_EVENT_EXT       0x4000 /**< Additional trace events. */
 
 /** @} */
 
