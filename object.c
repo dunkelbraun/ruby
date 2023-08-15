@@ -39,6 +39,7 @@
 #include "ruby/util.h"
 #include "ruby/assert.h"
 #include "builtin.h"
+#include "vm_core.h"
 
 /*!
  * \addtogroup object
@@ -1633,7 +1634,9 @@ static VALUE
 rb_mod_freeze(VALUE mod)
 {
     rb_class_name(mod);
-    return rb_obj_freeze(mod);
+    VALUE ret = rb_obj_freeze(mod);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, mod, rb_intern("ms_freeze"), 0, 0, mod);
+    return ret;
 }
 
 /*
