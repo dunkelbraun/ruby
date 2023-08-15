@@ -2554,13 +2554,15 @@ static void
 push_event_info(const rb_iseq_t *iseq, rb_event_flag_t events, int line, VALUE ary)
 {
 #define C(ev, cstr, l) if (events & ev) rb_ary_push(ary, rb_ary_new_from_args(2, l, ID2SYM(rb_intern(cstr))));
-    C(RUBY_EVENT_CLASS,    "class",    rb_iseq_first_lineno(iseq));
-    C(RUBY_EVENT_CALL,     "call",     rb_iseq_first_lineno(iseq));
-    C(RUBY_EVENT_B_CALL,   "b_call",   rb_iseq_first_lineno(iseq));
-    C(RUBY_EVENT_LINE,     "line",     INT2FIX(line));
-    C(RUBY_EVENT_END,      "end",      INT2FIX(line));
-    C(RUBY_EVENT_RETURN,   "return",   INT2FIX(line));
-    C(RUBY_EVENT_B_RETURN, "b_return", INT2FIX(line));
+    C(RUBY_EVENT_CLASS,     "class",     rb_iseq_first_lineno(iseq));
+    C(RUBY_EVENT_CALL,      "call",      rb_iseq_first_lineno(iseq));
+    C(RUBY_EVENT_B_CALL,    "b_call",    rb_iseq_first_lineno(iseq));
+    C(RUBY_EVENT_LINE,      "line",      INT2FIX(line));
+    C(RUBY_EVENT_END,       "end",       INT2FIX(line));
+    C(RUBY_EVENT_RETURN,    "return",    INT2FIX(line));
+    C(RUBY_EVENT_B_RETURN,  "b_return",  INT2FIX(line));
+    C(RUBY_EVENT_CT_ACCESS, "ct_access", rb_iseq_first_lineno(iseq));
+    C(RUBY_EVENT_CT_SET,    "ct_set",    rb_iseq_first_lineno(iseq));
 #undef C
 }
 
@@ -3089,6 +3091,8 @@ iseq_data_to_ary(const rb_iseq_t *iseq)
             CHECK_EVENT(RUBY_EVENT_RETURN);
             CHECK_EVENT(RUBY_EVENT_B_CALL);
             CHECK_EVENT(RUBY_EVENT_B_RETURN);
+            CHECK_EVENT(RUBY_EVENT_CT_ACCESS);
+            CHECK_EVENT(RUBY_EVENT_CT_SET);
 #undef CHECK_EVENT
             prev_insn_info = info;
         }

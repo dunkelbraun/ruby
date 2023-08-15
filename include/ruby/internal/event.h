@@ -30,16 +30,18 @@
  *
  * @{
  */
-#define RUBY_EVENT_NONE      0x0000 /**< No events. */
-#define RUBY_EVENT_LINE      0x0001 /**< Encountered a new line. */
-#define RUBY_EVENT_CLASS     0x0002 /**< Encountered a new class. */
-#define RUBY_EVENT_END       0x0004 /**< Encountered an end of a class clause. */
-#define RUBY_EVENT_CALL      0x0008 /**< A method, written in Ruby, is called. */
-#define RUBY_EVENT_RETURN    0x0010 /**< Encountered a `return` statement. */
-#define RUBY_EVENT_C_CALL    0x0020 /**< A method, written in C, is called. */
-#define RUBY_EVENT_C_RETURN  0x0040 /**< Return from a method, written in C. */
-#define RUBY_EVENT_RAISE     0x0080 /**< Encountered a `raise` statement. */
-#define RUBY_EVENT_ALL       0x00ff /**< Bitmask of traditional events. */
+#define RUBY_EVENT_NONE         0x00000 /**< No events. */
+#define RUBY_EVENT_LINE         0x00001 /**< Encountered a new line. */
+#define RUBY_EVENT_CLASS        0x00002 /**< Encountered a new class. */
+#define RUBY_EVENT_END          0x00004 /**< Encountered an end of a class clause. */
+#define RUBY_EVENT_CALL         0x00008 /**< A method, written in Ruby, is called. */
+#define RUBY_EVENT_RETURN       0x00010 /**< Encountered a `return` statement. */
+#define RUBY_EVENT_C_CALL       0x00020 /**< A method, written in C, is called. */
+#define RUBY_EVENT_C_RETURN     0x00040 /**< Return from a method, written in C. */
+#define RUBY_EVENT_RAISE        0x00080 /**< Encountered a `raise` statement. */
+#define RUBY_EVENT_ALL          0x000ff /**< Bitmask of traditional events. */
+#define RUBY_EVENT_CT_SET       0x10000 /**< Additional trace events. */
+#define RUBY_EVENT_CT_ACCESS    0x20000 /**< Additional trace events. */
 
 /** @} */
 
@@ -48,13 +50,13 @@
  *
  * @{
  */
-#define RUBY_EVENT_B_CALL            0x0100 /**< Encountered an `yield` statement. */
-#define RUBY_EVENT_B_RETURN          0x0200 /**< Encountered a `next` statement. */
-#define RUBY_EVENT_THREAD_BEGIN      0x0400 /**< Encountered a new thread. */
-#define RUBY_EVENT_THREAD_END        0x0800 /**< Encountered an end of a thread. */
-#define RUBY_EVENT_FIBER_SWITCH      0x1000 /**< Encountered a `Fiber#yield`. */
-#define RUBY_EVENT_SCRIPT_COMPILED   0x2000 /**< Encountered an `eval`. */
-#define RUBY_EVENT_TRACEPOINT_ALL    0xffff /**< Bitmask of extended events. */
+#define RUBY_EVENT_B_CALL            0x00100 /**< Encountered an `yield` statement. */
+#define RUBY_EVENT_B_RETURN          0x00200 /**< Encountered a `next` statement. */
+#define RUBY_EVENT_THREAD_BEGIN      0x00400 /**< Encountered a new thread. */
+#define RUBY_EVENT_THREAD_END        0x00800 /**< Encountered an end of a thread. */
+#define RUBY_EVENT_FIBER_SWITCH      0x01000 /**< Encountered a `Fiber#yield`. */
+#define RUBY_EVENT_SCRIPT_COMPILED   0x02000 /**< Encountered an `eval`. */
+#define RUBY_EVENT_TRACEPOINT_ALL    0x0ffff /**< Bitmask of extended events. */
 
 /** @} */
 

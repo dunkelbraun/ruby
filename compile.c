@@ -10573,6 +10573,8 @@ event_name_to_flag(VALUE sym)
                 CHECK_EVENT(RUBY_EVENT_RETURN);
                 CHECK_EVENT(RUBY_EVENT_B_CALL);
                 CHECK_EVENT(RUBY_EVENT_B_RETURN);
+                CHECK_EVENT(RUBY_EVENT_CT_ACCESS);
+                CHECK_EVENT(RUBY_EVENT_CT_SET);
 #undef CHECK_EVENT
     return RUBY_EVENT_NONE;
 }

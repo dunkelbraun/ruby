@@ -274,6 +274,13 @@ opt_getconstant_path
         // INSN_ATTR(width) == 2
         vm_ic_update(GET_ISEQ(), ic, val, GET_EP(), GET_PC() - 2);
     }
+    rb_execution_context_t *ec = GET_EC();
+    VALUE id_arr = rb_ary_new();
+    while (*segments) {
+        rb_ary_push(id_arr, ID2SYM(*segments++));
+    }
+    VALUE data = rb_ary_new_from_args(2, val, id_arr);
+    EXEC_EVENT_HOOK(ec, RUBY_EVENT_CT_ACCESS, ec->cfp->self, 0, 0, 0, data);
 }
 
 /* Get constant variable id. If klass is Qnil and allow_nil is Qtrue, constants
@@ -307,6 +314,8 @@ setconstant
     vm_check_if_namespace(cbase);
     vm_ensure_not_refinement_module(GET_SELF());
     rb_const_set(cbase, id, val);
+    rb_execution_context_t *ec = GET_EC();
+    EXEC_EVENT_HOOK(ec, RUBY_EVENT_CT_SET, cbase, id, 0, 0, val);
 }
 
 /* get global variable id. */

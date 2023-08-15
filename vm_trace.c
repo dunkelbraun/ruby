@@ -647,14 +647,16 @@ static const char *
 get_event_name(rb_event_flag_t event)
 {
     switch (event) {
-      case RUBY_EVENT_LINE:     return "line";
-      case RUBY_EVENT_CLASS:    return "class";
-      case RUBY_EVENT_END:      return "end";
-      case RUBY_EVENT_CALL:     return "call";
-      case RUBY_EVENT_RETURN:	return "return";
-      case RUBY_EVENT_C_CALL:	return "c-call";
-      case RUBY_EVENT_C_RETURN:	return "c-return";
-      case RUBY_EVENT_RAISE:	return "raise";
+      case RUBY_EVENT_LINE:           return "line";
+      case RUBY_EVENT_CLASS:          return "class";
+      case RUBY_EVENT_END:            return "end";
+      case RUBY_EVENT_CALL:           return "call";
+      case RUBY_EVENT_RETURN:	      return "return";
+      case RUBY_EVENT_C_CALL:	      return "c-call";
+      case RUBY_EVENT_C_RETURN:	      return "c-return";
+      case RUBY_EVENT_RAISE:	      return "raise";
+      case RUBY_EVENT_CT_ACCESS:      return "ct_access";
+      case RUBY_EVENT_CT_SET:         return "ct_set";
       default:
         return "unknown";
     }
@@ -681,6 +683,8 @@ get_event_id(rb_event_flag_t event)
         C(thread_end, THREAD_END);
         C(fiber_switch, FIBER_SWITCH);
         C(script_compiled, SCRIPT_COMPILED);
+        C(ct_access, CT_ACCESS);
+        C(ct_set, CT_SET);
 #undef C
       default:
         return 0;
@@ -823,6 +827,8 @@ symbol2event_flag(VALUE v)
     C(thread_end, THREAD_END);
     C(fiber_switch, FIBER_SWITCH);
     C(script_compiled, SCRIPT_COMPILED);
+    C(ct_access, CT_ACCESS);
+    C(ct_set, CT_SET);
 
     /* joke */
     C(a_call, A_CALL);
@@ -943,6 +949,8 @@ rb_tracearg_parameters(rb_trace_arg_t *trace_arg)
       case RUBY_EVENT_CLASS:
       case RUBY_EVENT_END:
       case RUBY_EVENT_SCRIPT_COMPILED:
+      case RUBY_EVENT_CT_ACCESS:
+      case RUBY_EVENT_CT_SET:
         rb_raise(rb_eRuntimeError, "not supported by this event");
         break;
     }
@@ -966,6 +974,10 @@ rb_tracearg_callee_id(rb_trace_arg_t *trace_arg)
 VALUE
 rb_tracearg_defined_class(rb_trace_arg_t *trace_arg)
 {
+    if (trace_arg->event & (RUBY_EVENT_CT_SET)) {
+        rb_raise(rb_eRuntimeError, "not supported by this event");
+    }
+
     fill_id_and_klass(trace_arg);
     return trace_arg->klass;
 }
@@ -1008,6 +1020,41 @@ rb_tracearg_return_value(rb_trace_arg_t *trace_arg)
         rb_bug("rb_tracearg_return_value: unreachable");
     }
     return trace_arg->data;
+}
+
+VALUE
+rb_tracearg_constant(rb_trace_arg_t *trace_arg)
+{
+    if (trace_arg->event & (RUBY_EVENT_CT_ACCESS | RUBY_EVENT_CT_SET)) {
+        /* ok */
+    }
+    else {
+        rb_raise(rb_eRuntimeError, "not supported by this event");
+    }
+
+    if (trace_arg->data == Qundef) {
+        rb_bug("tp_attr_constant_value_m: unreachable");
+    }
+
+    return trace_arg->data;
+}
+
+
+VALUE
+rb_tracearg_constant_name(rb_trace_arg_t *trace_arg)
+{
+    if (trace_arg->event & (RUBY_EVENT_CT_SET)) {
+        /* ok */
+    }
+    else {
+        rb_raise(rb_eRuntimeError, "not supported by this event");
+    }
+
+    if (trace_arg->id == Qundef) {
+        rb_bug("tp_attr_constant_value_m: unreachable");
+    }
+
+    return ID2SYM(trace_arg->id);
 }
 
 VALUE
@@ -1148,6 +1195,18 @@ static VALUE
 tracepoint_attr_return_value(rb_execution_context_t *ec, VALUE tpval)
 {
     return rb_tracearg_return_value(get_trace_arg());
+}
+
+static VALUE
+tracepoint_attr_constant(rb_execution_context_t *ec, VALUE tpval)
+{
+    return rb_tracearg_constant(get_trace_arg());
+}
+
+static VALUE
+tracepoint_attr_constant_name(rb_execution_context_t *ec, VALUE tpval)
+{
+    return rb_tracearg_constant_name(get_trace_arg());
 }
 
 static VALUE

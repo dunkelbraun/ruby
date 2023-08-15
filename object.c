@@ -41,6 +41,7 @@
 #include "ruby/assert.h"
 #include "builtin.h"
 #include "shape.h"
+#include "vm_core.h"
 
 /* Flags of RObject
  *
@@ -2478,6 +2479,8 @@ rb_mod_const_get(int argc, VALUE *argv, VALUE mod)
 #endif
     }
 
+    rb_execution_context_t *ec = GET_EC();
+    EXEC_EVENT_HOOK(ec, RUBY_EVENT_CT_ACCESS, ec->cfp->self, 0, 0, 0, mod);
     return mod;
 
   wrong_name:
@@ -2511,6 +2514,7 @@ rb_mod_const_set(VALUE mod, VALUE name, VALUE value)
     if (!id) id = rb_intern_str(name);
     rb_const_set(mod, id, value);
 
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_CT_SET, mod, id, 0, 0, value);
     return value;
 }
 
