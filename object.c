@@ -2404,6 +2404,7 @@ rb_mod_const_set(VALUE mod, VALUE name, VALUE value)
     if (!id) id = rb_intern_str(name);
     rb_const_set(mod, id, value);
 
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, mod, rb_intern("ms_const_set"), 0, 0, ID2SYM(id));
     return value;
 }
 
