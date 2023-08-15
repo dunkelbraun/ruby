@@ -1158,6 +1158,7 @@ rb_mod_include(int argc, VALUE *argv, VALUE module)
     while (argc--) {
         rb_funcall(argv[argc], id_append_features, 1, module);
         rb_funcall(argv[argc], id_included, 1, module);
+        EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, module, rb_intern("ms_include"), 0, 0, argv[argc]);
     }
     return module;
 }
