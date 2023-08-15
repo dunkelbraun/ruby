@@ -1772,6 +1772,7 @@ rb_obj_extend(int argc, VALUE *argv, VALUE obj)
     while (argc--) {
         rb_funcall(argv[argc], id_extend_object, 1, obj);
         rb_funcall(argv[argc], id_extended, 1, obj);
+        EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, obj, rb_intern("ms_extend"), 0, 0, argv[argc]);
     }
     return obj;
 }
