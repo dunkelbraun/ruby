@@ -2992,6 +2992,9 @@ rb_mod_remove_const(VALUE mod, VALUE name)
     if (!id) {
         undefined_constant(mod, name);
     }
+
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, mod, rb_intern("ms_remove_const"), 0, 0, ID2SYM(id));
+
     return rb_const_remove(mod, id);
 }
 
