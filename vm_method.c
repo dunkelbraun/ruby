@@ -1579,6 +1579,7 @@ remove_method(VALUE klass, ID mid)
     }
 
     CALL_METHOD_HOOK(self, removed, mid);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, self, rb_intern("ms_remove_method"), 0, 0, ID2SYM(mid));
 }
 
 void
@@ -1801,6 +1802,7 @@ rb_undef(VALUE klass, ID id)
     rb_add_method(klass, id, VM_METHOD_TYPE_UNDEF, 0, METHOD_VISI_PUBLIC);
 
     CALL_METHOD_HOOK(klass, undefined, id);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, klass, rb_intern("ms_rb_undef"), 0, 0, ID2SYM(id));
 }
 
 /*
