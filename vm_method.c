@@ -2327,7 +2327,9 @@ set_visibility(int argc, const VALUE *argv, VALUE module, rb_method_visibility_t
 static VALUE
 rb_mod_public(int argc, VALUE *argv, VALUE module)
 {
-    return set_visibility(argc, argv, module, METHOD_VISI_PUBLIC);
+    VALUE ret = set_visibility(argc, argv, module, METHOD_VISI_PUBLIC);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, module, rb_intern("ms_public_method"), 0, 0, rb_ary_new_from_values(argc, argv));
+    return ret;
 }
 
 /*
@@ -2359,7 +2361,9 @@ rb_mod_public(int argc, VALUE *argv, VALUE module)
 static VALUE
 rb_mod_protected(int argc, VALUE *argv, VALUE module)
 {
-    return set_visibility(argc, argv, module, METHOD_VISI_PROTECTED);
+    VALUE ret = set_visibility(argc, argv, module, METHOD_VISI_PROTECTED);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, module, rb_intern("ms_protected_method"), 0, 0, rb_ary_new_from_values(argc, argv));
+    return ret;
 }
 
 /*
@@ -2393,7 +2397,9 @@ rb_mod_protected(int argc, VALUE *argv, VALUE module)
 static VALUE
 rb_mod_private(int argc, VALUE *argv, VALUE module)
 {
-    return set_visibility(argc, argv, module, METHOD_VISI_PRIVATE);
+    VALUE ret = set_visibility(argc, argv, module, METHOD_VISI_PRIVATE);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, module, rb_intern("ms_private_method"), 0, 0, rb_ary_new_from_values(argc, argv));
+    return ret;
 }
 
 /*
@@ -2524,6 +2530,7 @@ static VALUE
 rb_mod_public_method(int argc, VALUE *argv, VALUE obj)
 {
     set_method_visibility(rb_singleton_class(obj), argc, argv, METHOD_VISI_PUBLIC);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, obj, rb_intern("ms_mod_public_method"), 0, 0, rb_ary_new_from_values(argc, argv));
     return obj;
 }
 
@@ -2552,6 +2559,7 @@ static VALUE
 rb_mod_private_method(int argc, VALUE *argv, VALUE obj)
 {
     set_method_visibility(rb_singleton_class(obj), argc, argv, METHOD_VISI_PRIVATE);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, obj, rb_intern("ms_mod_private_method"), 0, 0, rb_ary_new_from_values(argc, argv));
     return obj;
 }
 
