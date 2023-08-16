@@ -2243,10 +2243,31 @@ set_visibility(int argc, const VALUE *argv, VALUE module, rb_method_visibility_t
     }
 
     set_method_visibility(module, argc, argv, visi);
+
+    ID trace_method;
+    switch (visi) {
+    case METHOD_VISI_PRIVATE:
+        trace_method = rb_intern("ms_private_method");
+        break;
+    case METHOD_VISI_PROTECTED:
+        trace_method = rb_intern("ms_protected_method");
+        break;
+    case METHOD_VISI_PUBLIC:
+        trace_method = rb_intern("ms_public_method");
+        break;
+    }
+
     if (argc == 1) {
         return argv[0];
+        if (trace_method) {
+            EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, module, trace_method, 0, 0, argv[0]);
+        }
     }
-    return rb_ary_new_from_values(argc, argv);
+    VALUE ret = rb_ary_new_from_values(argc, argv);
+    if (trace_method) {
+        EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, module, trace_method, 0, 0, ret);
+    }
+    return ret;
 }
 
 /*
