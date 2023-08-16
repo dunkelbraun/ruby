@@ -1098,6 +1098,7 @@ method_added(VALUE klass, ID mid)
 {
     if (ruby_running) {
         CALL_METHOD_HOOK(klass, added, mid);
+        EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, klass, rb_intern("ms_method_added"), 0, 0, ID2SYM(mid));
     }
 }
 
