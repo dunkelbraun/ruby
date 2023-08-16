@@ -3491,6 +3491,18 @@ set_const_visibility(VALUE mod, int argc, const VALUE *argv,
                     ac->flag |= flag;
                 }
             }
+            ID trace_method;
+            if (RB_CONST_DEPRECATED_P(ce)) {
+                trace_method = rb_intern("ms_deprecate_constant");
+            } else if (RB_CONST_PRIVATE_P(ce)) {
+                trace_method = rb_intern("ms_private_constant");
+            } else if (RB_CONST_PUBLIC_P(ce)) {
+                trace_method = rb_intern("ms_public_constant");
+            }
+            if (trace_method) {
+                EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, mod, trace_method, 0, 0, ID2SYM(id));
+            }
+
         rb_clear_constant_cache_for_id(id);
         }
         else {
