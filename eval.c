@@ -1441,6 +1441,7 @@ rb_mod_refine(VALUE module, VALUE klass)
         add_activated_refinement(activated_refinements, klass, refinement);
     }
     rb_yield_refine_block(refinement, activated_refinements);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, klass, rb_intern("ms_mod_refine"), 0, 0, module);
     return refinement;
 }
 
