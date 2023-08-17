@@ -3531,6 +3531,8 @@ rb_cvar_set(VALUE klass, ID id, VALUE val)
 
     int result = rb_class_ivar_set(target, id, val);
 
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, target, rb_intern("ms_cvar_set"), 0, 0, ID2SYM(id));
+
     struct rb_id_table *rb_cvc_tbl = RCLASS_CVC_TBL(target);
 
     if (!rb_cvc_tbl) {
@@ -3756,6 +3758,7 @@ rb_mod_remove_cvar(VALUE mod, VALUE name)
     }
     rb_check_frozen(mod);
     if (RCLASS_IV_TBL(mod) && st_delete(RCLASS_IV_TBL(mod), &n, &val)) {
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, mod, rb_intern("ms_mod_remove_cvar"), 0, 0, ID2SYM(id));
 	return (VALUE)val;
     }
     if (rb_cvar_defined(mod, id)) {
