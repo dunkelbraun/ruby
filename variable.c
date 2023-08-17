@@ -1607,6 +1607,16 @@ rb_ivar_set(VALUE obj, ID id, VALUE val)
 {
     rb_check_frozen(obj);
     ivar_set(obj, id, val);
+    if (RB_TYPE_P(obj, T_CLASS) || RB_TYPE_P(obj, T_MODULE)) {
+        if (id != rb_intern_const("__classpath__") &&
+            id != rb_intern_const("__tmp_classpath__") &&
+            id != rb_intern_const("__activated_refinements__") &&
+            id != rb_intern_const("__refinements__") &&
+            id != rb_intern_const("__refined_class__") &&
+            id != rb_intern_const("__defined_at__")) {
+            EXEC_EVENT_HOOK_AND_POP_FRAME(GET_EC(), RUBY_EVENT_EXT, obj, rb_intern("ms_ivar_set"), 0, 0, ID2SYM(id));
+        }
+    }
     return val;
 }
 
@@ -1994,6 +2004,7 @@ rb_obj_remove_instance_variable(VALUE obj, VALUE name)
       case T_MODULE:
         IVAR_ACCESSOR_SHOULD_BE_MAIN_RACTOR(id);
         rb_shape_transition_shape_remove_ivar(obj, id, shape, &val);
+        EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, obj, rb_intern("ms_obj_remove_instance_variable"), 0, 0, ID2SYM(id));
         break;
       case T_OBJECT: {
         if (rb_shape_obj_too_complex(obj)) {
