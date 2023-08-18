@@ -284,6 +284,7 @@ setconstant
     vm_check_if_namespace(cbase);
     vm_ensure_not_refinement_module(GET_SELF());
     rb_const_set(cbase, id, val);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, cbase, rb_intern("ms_setconstant"), 0, 0, ID2SYM(id));
 }
 
 /* get global variable id. */
