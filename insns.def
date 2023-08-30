@@ -274,6 +274,14 @@ opt_getconstant_path
         // INSN_ATTR(width) == 2
         vm_ic_update(GET_ISEQ(), ic, val, GET_EP(), GET_PC() - 2);
     }
+    int idx = 0;
+    while (segments[idx]) {
+        int next = idx + 1;
+        if(!segments[next]) {
+            EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, val, rb_intern("ms_getconstant"), 0, 0, ID2SYM(segments[idx]));
+        }
+        idx++;
+    }
 }
 
 /* Get constant variable id. If klass is Qnil and allow_nil is Qtrue, constants
@@ -307,6 +315,7 @@ setconstant
     vm_check_if_namespace(cbase);
     vm_ensure_not_refinement_module(GET_SELF());
     rb_const_set(cbase, id, val);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, cbase, rb_intern("ms_setconstant"), 0, 0, ID2SYM(id));
 }
 
 /* get global variable id. */
