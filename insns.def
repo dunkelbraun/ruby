@@ -274,6 +274,14 @@ opt_getconstant_path
         // INSN_ATTR(width) == 2
         vm_ic_update(GET_ISEQ(), ic, val, GET_EP(), GET_PC() - 2);
     }
+    int idx = 0;
+    while (segments[idx]) {
+        int next = idx + 1;
+        if(!segments[next]) {
+            EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, val, rb_intern("ms_getconstant"), 0, 0, ID2SYM(segments[idx]));
+        }
+        idx++;
+    }
 }
 
 /* Get constant variable id. If klass is Qnil and allow_nil is Qtrue, constants
@@ -289,6 +297,7 @@ getconstant
 // attr bool leaf = false; /* has rb_autoload_load() */
 {
     val = vm_get_ev_const(ec, klass, id, allow_nil == Qtrue, 0);
+    EXEC_EVENT_HOOK(GET_EC(), RUBY_EVENT_EXT, val, rb_intern("ms_getconstant"), 0, 0, Qnil);
 }
 
 /* Set constant variable id under cbase class or module.
