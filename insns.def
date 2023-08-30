@@ -266,6 +266,7 @@ getconstant
 // attr bool leaf = false; /* has rb_autoload_load() */
 {
     val = vm_get_ev_const(ec, klass, id, allow_nil == Qtrue, 0);
+    EXEC_EVENT_HOOK(ec, RUBY_EVENT_EXT, val, rb_intern("ms_getconstant"), 0, 0, ID2SYM(id));
 }
 
 /* Set constant variable id under cbase class or module.
